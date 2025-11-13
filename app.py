@@ -32,18 +32,22 @@ with st.form("prediction_form"):
         
         # Use radio buttons for binary 'Yes'/'No' inputs and map to 0/1
         menopause_status = st.radio("Menopause", ['No', 'Yes'], index=0, help="Is the patient post-menopausal?")
+        # User requested: 0 means yes and 1 means no
         menopause = 0 if menopause_status == 'Yes' else 1
 
     with col2:
         tumor_size_cm = st.number_input("Tumor Size (cm)", min_value=0.0, max_value=50.0, value=2.0, format="%.2f")
-        node_invasion = st.radio("Node invasion", ['No', 'Yes'], index=0, help="Is the cancer spread to lymph nodes ?")
-        Node invasion = 1 if node_invasion == 'Yes' else 0
+        node_invasion_status = st.radio("Node invasion", ['No', 'Yes'], index=0, help="Is the cancer spread to lymph nodes ?")
+        # User requested: 1 means yes, 0 means no
+        node_invasion = 1 if node_invasion_status == 'Yes' else 0
 
     with col3:
         metastasis_status = st.radio("Metastasis", ['No', 'Yes'], index=0, help="Is there evidence of metastasis?")
+        # User requested: 1 means yes, 0 means no
         metastasis = 1 if metastasis_status == 'Yes' else 0
         
         history_status = st.radio("History of Breast Cancer", ['No', 'Yes'], index=0, help="Does the patient have a history of breast cancer?")
+        # User requested: 1 means yes, 0 means no
         history = 1 if history_status == 'Yes' else 0
 
     submit_button = st.form_submit_button("Predict")
@@ -63,10 +67,10 @@ if submit_button:
     # Convert to DataFrame
     input_df = pd.DataFrame([input_data_dict])
 
-    # Add 'serian no' if it's part of the features but not in input, fill with 0 or a default value
+    # Add 'serial no' if it's part of the features but not in input, fill with 0 or a default value
     # This assumes 'serial no' is not a user input feature and can be default-filled.
-    if 'serian no' in feature_names:
-        input_df['serian no'] = 0  # Default value, adjust if needed
+    if 'serial no' in feature_names:
+        input_df['serial no'] = 0  # Default value, adjust if needed
 
     # Add interaction term if it was part of the original training features
     if 'tumor_node_interaction' in feature_names:
