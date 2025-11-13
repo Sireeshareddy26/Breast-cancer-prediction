@@ -29,53 +29,46 @@ with st.form("prediction_form"):
 
     with col1:
         st.subheader("Demographics & Core Metrics")
-        # Check if 'serian no' is in feature_names and exclude it from user input
-        if 'serian no' not in feature_names:
-            age = st.number_input("Age", min_value=1, max_value=120, value=50)
-        else:
-            age = st.number_input("Age", min_value=1, max_value=120, value=50)
-        bmi = st.number_input("BMI", min_value=10.0, max_value=70.0, value=25.0, format="%.2f")
-        glucose = st.number_input("Glucose", min_value=50.0, max_value=300.0, value=100.0, format="%.2f")
-        insulin = st.number_input("Insulin", min_value=0.5, max_value=100.0, value=10.0, format="%.2f")
-        homa = st.number_input("HOMA", min_value=0.1, max_value=30.0, value=2.0, format="%.2f")
-        leptin = st.number_input("Leptin", min_value=1.0, max_value=100.0, value=20.0, format="%.2f")
+        age = st.number_input("Age", min_value=1, max_value=120, value=50)
+        
+        # Use radio buttons for binary 'Yes'/'No' inputs and map to 0/1
+        menopause_status = st.radio("Menopause", ['No', 'Yes'], index=0, help="Is the patient post-menopausal?")
+        menopause = 1 if menopause_status == 'Yes' else 0
 
     with col2:
-        st.subheader("Adipokines & Inflammation")
-        adiponectin = st.number_input("Adiponectin", min_value=1.0, max_value=50.0, value=15.0, format="%.2f")
-        resistin = st.number_input("Resistin", min_value=1.0, max_value=60.0, value=10.0, format="%.2f")
-        mcp1 = st.number_input("MCP.1", min_value=10.0, max_value=2000.0, value=300.0, format="%.2f")
-
-    with col3:
-        st.subheader("Tumor & Status Details")
+        st.subheader("Tumor & Invasion Details")
         tumor_size_cm = st.number_input("Tumor Size (cm)", min_value=0.0, max_value=50.0, value=2.0, format="%.2f")
         node_invasion = st.number_input("Node Invasion (0-3)", min_value=0, max_value=3, value=0)
-        estrogen_status = st.number_input("Estrogen Status (0/1)", min_value=0, max_value=1, value=0)
-        prg_status = st.number_input("PRG Status (0/1)", min_value=0, max_value=1, value=0)
-        her2_status = st.number_input("HER2 Status (0/1)", min_value=0, max_value=1, value=0)
-        histology = st.number_input("Histology (e.g., 1, 2, 3)", min_value=1, max_value=3, value=1)
-        malignant_status = st.number_input("Malignant Status (0/1)", min_value=0, max_value=1, value=0)
 
+    with col3:
+        st.subheader("Disease & History")
+        metastasis_status = st.radio("Metastasis", ['No', 'Yes'], index=0, help="Is there evidence of metastasis?")
+        metastasis = 1 if metastasis_status == 'Yes' else 0
+        
+        history_status = st.radio("History of Breast Cancer", ['No', 'Yes'], index=0, help="Does the patient have a history of breast cancer?")
+        history = 1 if history_status == 'Yes' else 0
 
     submit_button = st.form_submit_button("Predict")
 
 # --- Prediction Logic ---
 if submit_button:
-    # Create input DataFrame
+    # Create a dictionary to hold user inputs
     input_data_dict = {
-        'age': age, 'bmi': bmi, 'glucose': glucose, 'insulin': insulin, 'homa': homa,
-        'leptin': leptin, 'adiponectin': adiponectin, 'resistin': resistin, 'mcp.1': mcp1,
-        'tumor size (cm)': tumor_size_cm, 'node invasion': node_invasion,
-        'estrogen status': estrogen_status, 'prg status': prg_status,
-        'her2 status': her2_status, 'histology': histology,
-        'malignant status': malignant_status
+        'age': age,
+        'menopause': menopause,
+        'tumor size (cm)': tumor_size_cm,
+        'node invasion': node_invasion,
+        'metastasis': metastasis,
+        'history': history
     }
+    
+    # Convert to DataFrame
+    input_df = pd.DataFrame([input_data_dict])
 
     # Add 'serian no' if it's part of the features but not in input, fill with 0 or a default value
-    if 'serian no' in feature_names and 'serian no' not in input_data_dict:
-        input_data_dict['serian no'] = 0  # Default value, adjust if needed
-
-    input_df = pd.DataFrame([input_data_dict])
+    # This assumes 'serial no' is not a user input feature and can be default-filled.
+    if 'serian no' in feature_names:
+        input_df['serian no'] = 0  # Default value, adjust if needed
 
     # Add interaction term if it was part of the original training features
     if 'tumor_node_interaction' in feature_names:
