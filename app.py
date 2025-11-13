@@ -36,8 +36,8 @@ with st.form("prediction_form"):
 
     with col2:
         tumor_size_cm = st.number_input("Tumor Size (cm)", min_value=0.0, max_value=50.0, value=2.0, format="%.2f")
-        node_invasion = st.radio("invasion", ['No', 'Yes'], index=0, help="Is the cancer spread to lymph nodes ?")
-        invasion = 1 if node_invasion == 'Yes' else 0
+        node_invasion = st.radio("Node invasion", ['No', 'Yes'], index=0, help="Is the cancer spread to lymph nodes ?")
+        Node invasion = 1 if node_invasion == 'Yes' else 0
 
     with col3:
         metastasis_status = st.radio("Metastasis", ['No', 'Yes'], index=0, help="Is there evidence of metastasis?")
