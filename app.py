@@ -28,20 +28,17 @@ with st.form("prediction_form"):
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.subheader("Demographics & Core Metrics")
         age = st.number_input("Age", min_value=1, max_value=120, value=50)
         
         # Use radio buttons for binary 'Yes'/'No' inputs and map to 0/1
         menopause_status = st.radio("Menopause", ['No', 'Yes'], index=0, help="Is the patient post-menopausal?")
-        menopause = 1 if menopause_status == 'Yes' else 0
+        menopause = 0 if menopause_status == 'Yes' else 1
 
     with col2:
-        st.subheader("Tumor & Invasion Details")
         tumor_size_cm = st.number_input("Tumor Size (cm)", min_value=0.0, max_value=50.0, value=2.0, format="%.2f")
         node_invasion = st.number_input("Node Invasion (0-3)", min_value=0, max_value=3, value=0)
 
     with col3:
-        st.subheader("Disease & History")
         metastasis_status = st.radio("Metastasis", ['No', 'Yes'], index=0, help="Is there evidence of metastasis?")
         metastasis = 1 if metastasis_status == 'Yes' else 0
         
